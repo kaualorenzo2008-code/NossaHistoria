@@ -1,0 +1,52 @@
+
+name: Gerar APK - Nossa História
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '*.zip'
+      - '.github/workflows/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Preparar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar Android
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar SDK
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Instalar Gradle
+        run: |
+          wget https://services.gradle.org/distributions/gradle-8.9-bin.zip
+          unzip -q gradle-8.9-bin.zip
+
+      - name: Extrair projeto
+        run: |
+          ARCHIVE=$(find . -maxdepth 1 -name '*.zip' | head -n 1)
+          test -n "$ARCHIVE"
+          mkdir extracted
+          unzip -q "$ARCHIVE" -d extracted
+
+      - name: Compilar aplicativo
+        run: |
+          cd extracted/NossaHistoriaAndroid
+          ../gradle-8.9/bin/gradle assembleDebug
+
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nossa-Historia-APK
+          path: extracted/NossaHistoriaAndroid/app/build/outputs/apk/debug/app-debug.apk
