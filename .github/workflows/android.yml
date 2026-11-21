@@ -6,6 +6,7 @@ on:
   push:
     paths:
       - '*.zip'
+      - 'app/**'
       - '.github/workflows/**'
 
 jobs:
@@ -39,6 +40,10 @@ jobs:
           test -n "$ARCHIVE"
           mkdir extracted
           unzip -q "$ARCHIVE" -d extracted
+
+      - name: Aplicar correção Java e Kotlin 17
+        run: |
+          cp app/build.gradle.kts extracted/NossaHistoriaAndroid/app/build.gradle.kts
 
       - name: Compilar aplicativo
         run: |
