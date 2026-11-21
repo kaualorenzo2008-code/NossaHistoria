@@ -43,7 +43,7 @@ jobs:
       - name: Compilar aplicativo
         run: |
           cd extracted/NossaHistoriaAndroid
-          ../gradle-8.9/bin/gradle assembleDebug
+          ../../gradle-8.9/bin/gradle assembleDebug
 
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
